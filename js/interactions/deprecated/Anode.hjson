@@ -1,0 +1,30 @@
+{
+    color: [0, 128, 0],
+    relationships: {
+        default: [
+            [ 10, -0.5 ],
+        ],
+        'Positron': [
+            [ 10, -20 ],
+            [ 30, 10 ],
+            [ 60, 5 ],
+        ],
+        'Electron': [
+            [ 10, -20 ],
+            [ 30, -10 ],
+            [ 60, -5 ],
+        ],
+        'Anode': [
+            [ 15, -8 ],
+            [ 17, -4],
+            [ 19, -2],
+            [ 22, 2 ],
+            [ 24, 4 ],
+            [ 27, 8 ]
+        ],
+    },
+    additive_relationships: false,
+    visible_radius: 10,
+    friction: 0.0,
+    mass: 10.0,
+}

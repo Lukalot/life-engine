@@ -1,0 +1,23 @@
+{
+    color: [0,255,0],
+    relationships: {
+        default: [
+            [ 10, -20 ],
+            [ 50, 10 ]
+        ],
+        'parasite': [
+            [ 10, -20 ],
+            [ 30, -30 ]
+        ],
+        'crystal': [
+            [ 40, -30 ]
+        ]
+    },
+    solid: true,
+    acceleration: true,
+    additive_relationships: false,
+    effect_inner_radius: 10,
+    collision_radius: 10,
+    visible_radius: 10,
+    friction: 0.2
+}

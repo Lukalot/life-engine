@@ -1,0 +1,23 @@
+{
+    color: [0,0,255],
+    relationships: {
+        default: [
+            [ 10, -5 ],
+            [ 30, -2 ],
+            [ 50, -0.5],
+            [ 70, 0.5 ],
+            [ 100, 0.75 ],
+        ],
+        'orbit': [
+            [ 10, -5 ],
+            [ 70, -3 ],
+        ],
+    },
+    solid: true,
+    acceleration: true,
+    additive_relationships: false,
+    effect_inner_radius: 10,
+    collision_radius: 10,
+    visible_radius: 10,
+    friction: 0.0
+}
