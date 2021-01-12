@@ -19,9 +19,9 @@
   "author": "Cameren Dolecheck",
   "license": "CC0-1.0",
   "dependencies": {
-    "electron": "^6.0.7",
+    "electron": "^6.1.12",
     "electron-reload": "^1.5.0",
-    "mocha": "^6.2.0",
+    "mocha": "^6.2.3",
     "p5": "^0.9.0"
   }
 }
