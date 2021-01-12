@@ -1,0 +1,11 @@
+{
+    visualize_relationships: false,
+    particle_render_mode: 'line', // circle, line, arrow
+    background: true,
+    paused: false,
+    step_this_frame: false,
+    camera_pan_speed: 10,
+    camera_zoom_rate: 0.015,
+    place_type: 0,
+    display_UI: true,
+}

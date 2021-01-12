@@ -1,0 +1,28 @@
+{
+    color: [0, 255, 255],
+    relationships: {
+        default: [
+            [ 10, -20 ],
+            [ 25, 5 ],
+        ],
+        'chaser': [
+            [ 10, -20 ],
+        ],
+        'runner': [
+            [ 10, -20 ],
+            [ 20, 20 ],
+            [ 40, 40 ]
+        ],
+        'orbit': [
+            [ 10, -20 ],
+            [ 40, -10 ],
+        ]
+    },
+    solid: true,
+    acceleration: true,
+    additive_relationships: false,
+    effect_inner_radius: 10,
+    collision_radius: 10,
+    visible_radius: 10,
+    friction: 0.2,
+}

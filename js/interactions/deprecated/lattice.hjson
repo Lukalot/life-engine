@@ -1,0 +1,20 @@
+{
+    color: [255, 255, 255],
+    relationships: {
+        default: [
+            [ 10, -5 ],
+            [ 25, -0.5 ]
+        ],
+        'lattice': [
+            [10, -10],
+            [30, 4]
+        ]
+    },
+    solid: true,
+    acceleration: true,
+    additive_relationships: false,
+    effect_inner_radius: 10,
+    collision_radius: 10,
+    visible_radius: 10,
+    friction: 0.5,
+}
