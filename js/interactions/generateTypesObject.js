@@ -23,6 +23,7 @@ module.exports = function generateTypesObject( object ) {
         nobject[type].relationships[eye][jay][0] *= simulation_settings.relationship_radius_multiplier;
         nobject[type].relationships[eye][jay][1] /= 30;
       }
+      object[type].max_size = 2 * Math.max.apply ( Math, Object.values ( object[type].relationships ).map ( v => v[v.length-1][0] ) );
     }
 
     current_type.additive_relationships = current_type.additive || false;

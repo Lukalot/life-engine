@@ -25,6 +25,11 @@ new ( require ( 'p5' ) ) ( function ( p ) {
     const Vector = require('p5').Vector;
     const particle_types = Particle.types;
     const ptypes = Object.keys(particle_types);
+    const Grid = uncached ( '../src/Grid.js' );
+    const simulation = uncached('../src/simulation.js');
+    // save timestamps for all required files
+    uncached.save ();
+
     const PALLETE = {
         background: p.color(17, 17, 19),
         grid: p.color(240, 240, 248)
@@ -39,7 +44,7 @@ new ( require ( 'p5' ) ) ( function ( p ) {
             let pos_vector = new Vector(p.random(-w / 2, w / 2), p.random(-h / 2, h / 2))
             let vel_vector = new Vector(0, 0)
             let pt = new Particle(
-                Object.keys(particle_types)[p.floor(p.random() * Object.keys(particle_types).length)],
+                ptypes[p.floor(p.random() * ptypes.length)],
                 pos_vector,
                 vel_vector,
             )
@@ -61,8 +66,8 @@ new ( require ( 'p5' ) ) ( function ( p ) {
         p.background(PALLETE.background)
     }
 
-    function inputHandler() {
-        updateCamera ();
+    function inputHandler ( draw ) {
+        updateCamera ( draw );
     }
 
     // additional scrolling control on mousewheel change
@@ -82,7 +87,7 @@ new ( require ( 'p5' ) ) ( function ( p ) {
             p.background(PALLETE.background);
         }
 
-        inputHandler();
+        inputHandler ( drawCanvas );
 
         p.push();
         // Apply camera settings for this frame
@@ -100,19 +105,27 @@ new ( require ( 'p5' ) ) ( function ( p ) {
 
         // Calculate next positions for all particles
         if (!general_settings.paused || general_settings.step_this_frame) {
-            particles.map(item => {
-                item.calculateUpdate(p, particles);
-                return item;
-            });
+            simulation.simulateParticles ( p, particles );
             general_settings.step_this_frame = false;
         }
 
-        // Update values to new positions and draw.
-        particles.map(item => {
-            item.update();
-            item.draw(p);
-            return item;
-        });
+        simulation.updateParticles ( p, particles );
+
+        // Calculate next positions for all particles
+        // if (!general_settings.paused || general_settings.step_this_frame) {
+        //     particles.map(item => {
+        //         item.calculateUpdate(p, particles);
+        //         return item;
+        //     });
+        //     general_settings.step_this_frame = false;
+        // }
+        //
+        // // Update values to new positions and draw.
+        // particles.map(item => {
+        //     item.update();
+        //     item.draw(p);
+        //     return item;
+        // });
 
         p.pop();
         // UI AREA -----------------

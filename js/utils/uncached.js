@@ -2,8 +2,8 @@ const fs = require ( 'fs' );
 let cache = {}, cachepath = require.resolve ( './_file_cache.json' ), update = false;
 
 function uncached ( name ) {
-    const   path = require.resolve ( name ),
-            timestamp = fs.statSync ( path ).mtime;
+    const   path = require.resolve ( name ).replace ( /\\/g, '/'),
+            timestamp = fs.statSync ( path ).mtimeMs;
     if ( cache [ path ] !== timestamp ) {
         cache [ path ] = timestamp
         delete require.cache [ path ];
