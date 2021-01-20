@@ -25,6 +25,11 @@ new ( require ( 'p5' ) ) ( function ( p ) {
     const Vector = require('p5').Vector;
     const particle_types = Particle.types;
     const ptypes = Object.keys(particle_types);
+    const Grid = uncached ( '../src/Grid.js' );
+    const simulation = uncached('../src/simulation.js');
+    // save timestamps for all required files
+    uncached.save ();
+
     const PALLETE = {
         background: p.color(17, 17, 19),
         grid: p.color(240, 240, 248)
@@ -39,7 +44,7 @@ new ( require ( 'p5' ) ) ( function ( p ) {
             let pos_vector = new Vector(p.random(-w / 2, w / 2), p.random(-h / 2, h / 2))
             let vel_vector = new Vector(0, 0)
             let pt = new Particle(
-                Object.keys(particle_types)[p.floor(p.random() * Object.keys(particle_types).length)],
+                ptypes[p.floor(p.random() * ptypes.length)],
                 pos_vector,
                 vel_vector,
             )
@@ -61,8 +66,8 @@ new ( require ( 'p5' ) ) ( function ( p ) {
         p.background(PALLETE.background)
     }
 
-    function inputHandler() {
-        updateCamera ();
+    function inputHandler ( draw ) {
+        updateCamera ( draw );
     }
 
     // additional scrolling control on mousewheel change
@@ -76,13 +81,66 @@ new ( require ( 'p5' ) ) ( function ( p ) {
         createSoup(simulation_settings.simulation_area.width, simulation_settings.simulation_area.height, simulation_settings.particle_quantity)
         drawCanvas()
     }
+
+    let perf = { frame: 0, time: 0 },
+        ms, total, count = 0;
+
+    function startPerformance () {
+        ms = performance.now ();
+    }
+
+    function logPerformance () {
+        total += performance.now () - ms;
+        count++;
+        if ( count === 10 ) {
+            perf.time = total / count;
+            perf.frame += count;
+            count = 0;
+            total = 0;
+            console.log ( perf );
+        }
+    }
+
+    function gridBased ( p ) {
+        // Calculate next positions for all particles
+        if (!general_settings.paused || general_settings.step_this_frame) {
+            startPerformance ();
+            simulation.simulateParticles ( particles );
+            logPerformance ();
+            general_settings.step_this_frame = false;
+        }
+
+        simulation.updateParticles ( p, particles );
+    }
+
+    function nSquared ( p ) {
+        // Calculate next positions for all particles
+        if (!general_settings.paused || general_settings.step_this_frame) {
+
+            startPerformance ();
+            for ( let particle of particles ) {
+                // particle.calculateUpdate(p, particles);
+                particle.fasterInteractions ( particles );
+            }
+            logPerformance ();
+
+            general_settings.step_this_frame = false;
+        }
+
+        for ( let particle of particles ) {
+            // particle.update();
+            particle.fasterUpdate ();
+            particle.draw(p);
+        } // Update values to new positions and draw.
+    }
+
     p.draw = function() {
         let p = this;
         if (general_settings.background) {
             p.background(PALLETE.background);
         }
 
-        inputHandler();
+        inputHandler ( drawCanvas );
 
         p.push();
         // Apply camera settings for this frame
@@ -98,21 +156,8 @@ new ( require ( 'p5' ) ) ( function ( p ) {
 
         p.scale(camera.zoom, camera.zoom);
 
-        // Calculate next positions for all particles
-        if (!general_settings.paused || general_settings.step_this_frame) {
-            particles.map(item => {
-                item.calculateUpdate(p, particles);
-                return item;
-            });
-            general_settings.step_this_frame = false;
-        }
-
-        // Update values to new positions and draw.
-        particles.map(item => {
-            item.update();
-            item.draw(p);
-            return item;
-        });
+        gridBased ( p );
+        // nSquared ( p );
 
         p.pop();
         // UI AREA -----------------

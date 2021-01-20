@@ -9,6 +9,19 @@ const p5 = require ( 'p5' ), Vector = p5.Vector;
 // We will do this again later any time types input is changed.
 const particle_types = generateTypesObject ( types_input );
 
+const max_particles = simulation_settings.particle_quantity;
+
+const   dish = simulation_settings.simulation_area.edge_mode === "soft_dish",
+        df = Math.fround ( simulation_settings.simulation_area.soft_force ),
+        dr = Math.fround ( simulation_settings.simulation_area.dish_radius );
+
+const   px = new Float32Array ( max_particles ),
+        py = new Float32Array ( max_particles ),
+        vx = new Float32Array ( max_particles ),
+        vy = new Float32Array ( max_particles );
+
+let index = 0;
+
 module.exports = class Particle {
 
     static types = particle_types;
@@ -18,11 +31,99 @@ module.exports = class Particle {
 
         Object.assign ( this, Particle.types [ type ] );
 
+        const i = index++;
+        this.id = i;
+        px [ i ] = pos.x;
+        py [ i ] = pos.y;
+        vx [ i ] = vel.x;
+        vy [ i ] = vel.y;
+
         this.pos = pos;
         this.npos = new Vector(0, 0); // Just making it clear that this property exists.
 
         this.vel = vel;
         this.nvel = new Vector(0, 0); // ditto
+    }
+
+    fasterInteractions ( particlesArray ) {
+        let ai = this.id,                       // A pointer
+            B, bi, i,                           // B pointer/increment
+            dx, dy,                             // place holders
+            fm,                                 // friction, mass
+            q, r, r2,                           // interaction query, distance placeholders
+            rel = this.relationships, t,        // interactions/types
+            xa = 0, ya = 0,                     // acceleration
+            xv = vx [ ai ], yv = vy [ ai ],     // velocity
+            x = px [ ai ], y = py [ ai ];       // A position
+
+        const e = Math.fround ( 1e-6 );
+
+        fm = Math.fround ( this.friction / this.mass );
+
+        for ( B of particlesArray ) {
+            if ( B === this ) continue;
+
+            bi = B.id;
+
+            dx = Math.fround ( px [ bi ] - x );
+            dy = Math.fround ( py [ bi ] - y );
+            r2 = Math.fround ( Math.fround ( dx * dx ) + Math.fround ( dy * dy ) );
+
+            r = 0;
+            t = rel [ B.type ] || rel.default;
+            i = t.length;
+            while ( i-- ) {
+                q = t [ i ];
+                if ( r2 < Math.fround ( q [ 0 ] ) ) {
+                    r = q [ 1 ];
+                }
+            }
+
+            if ( r === 0 ) continue;
+
+            r2 = Math.fround ( Math.sqrt ( r2 ) );
+            if ( r2 > e ) {
+                dx = Math.fround ( dx / r2 ); dy = Math.fround ( dy / r2 );
+            }
+
+            r = Math.fround ( r );
+
+            dx = Math.fround ( dx * r );
+            dy = Math.fround ( dy * r );
+            xa = Math.fround ( xa + dx );
+            ya = Math.fround ( ya + dy );
+        }
+        if ( dish ) {
+            dx = Math.fround ( x * x );  dy = Math.fround ( y * y );
+            r = Math.fround ( Math.sqrt ( dx + dy ) );
+            if ( r > dr ) {
+                if ( r > e ) {
+                    dx = Math.fround ( x / r );  dy = Math.fround ( y / r );
+                } else {
+                    dx = x;   dy = y;
+                }
+
+                r = Math.fround ( Math.fround ( r - dr ) * df );
+                dx = Math.fround ( dx * r );
+                dy = Math.fround ( dy * r );
+                xa = Math.fround ( xa - dx );
+                ya = Math.fround ( ya - dy );
+            }
+        }
+        xv = Math.fround ( xv + xa );
+        yv = Math.fround ( yv + ya );
+        xv = Math.fround ( xv * fm );
+        yv = Math.fround ( yv * fm );
+        vx [ ai ] = xv;
+        vy [ ai ] = yv;
+        px [ ai ] = Math.fround ( x + xv );
+        py [ ai ] = Math.fround ( y + yv );
+    }
+
+    fasterUpdate () {
+        let id = this.id;
+        this.pos.x = px [ id ];
+        this.pos.y = py [ id ];
     }
 
     // Update this particles state given an array of particles to be affected by.

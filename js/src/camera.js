@@ -8,7 +8,7 @@ const camera = {
 }
 
 module.exports.camera = camera;
-module.exports.updateCamera = function updateCamera () {
+module.exports.updateCamera = function updateCamera ( drawCanvas ) {
     let p = this;
     if (p.keyIsPressed) {
         // Left
