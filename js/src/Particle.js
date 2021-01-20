@@ -9,10 +9,10 @@ const p5 = require ( 'p5' ), Vector = p5.Vector;
 // We will do this again later any time types input is changed.
 const particle_types = generateTypesObject ( types_input );
 
-const max_particles = simulation_settings.max_particles;
+const max_particles = simulation_settings.particle_quantity;
 
 const   dish = simulation_settings.simulation_area.edge_mode === "soft_dish",
-        da = Math.fround ( simulation_settings.simulation_area.soft_force ),
+        df = Math.fround ( simulation_settings.simulation_area.soft_force ),
         dr = Math.fround ( simulation_settings.simulation_area.dish_radius );
 
 const   px = new Float32Array ( max_particles ),
@@ -55,11 +55,11 @@ module.exports = class Particle {
             xa = 0, ya = 0,                     // acceleration
             xv = vx [ ai ], yv = vy [ ai ],     // velocity
             x = px [ ai ], y = py [ ai ];       // A position
-        
+
         const e = Math.fround ( 1e-6 );
 
         fm = Math.fround ( this.friction / this.mass );
-        
+
         for ( B of particlesArray ) {
             if ( B === this ) continue;
 
@@ -67,8 +67,8 @@ module.exports = class Particle {
 
             dx = Math.fround ( px [ bi ] - x );
             dy = Math.fround ( py [ bi ] - y );
-            r2 = Math.fround ( Math.fround ( dx * dx ) + Math.fround ( dy * dy ) ); 
-            
+            r2 = Math.fround ( Math.fround ( dx * dx ) + Math.fround ( dy * dy ) );
+
             r = 0;
             t = rel [ B.type ] || rel.default;
             i = t.length;
@@ -96,14 +96,14 @@ module.exports = class Particle {
         if ( dish ) {
             dx = Math.fround ( x * x );  dy = Math.fround ( y * y );
             r = Math.fround ( Math.sqrt ( dx + dy ) );
-            if ( r < dr ) {
+            if ( r > dr ) {
                 if ( r > e ) {
                     dx = Math.fround ( x / r );  dy = Math.fround ( y / r );
                 } else {
                     dx = x;   dy = y;
                 }
 
-                r = Math.fround ( Math.fround ( r - dr ) * da );
+                r = Math.fround ( Math.fround ( r - dr ) * df );
                 dx = Math.fround ( dx * r );
                 dy = Math.fround ( dy * r );
                 xa = Math.fround ( xa - dx );

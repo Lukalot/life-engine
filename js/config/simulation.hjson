@@ -17,5 +17,4 @@
 
     // Multiplies the range values supplied in the types input
     relationship_radius_multiplier: 1,
-    max_particles: 1000
 }

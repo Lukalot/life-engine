@@ -81,6 +81,10 @@ new ( require ( 'p5' ) ) ( function ( p ) {
         createSoup(simulation_settings.simulation_area.width, simulation_settings.simulation_area.height, simulation_settings.particle_quantity)
         drawCanvas()
     }
+
+    let perf = { frame: 0, time: 0 },
+        ms, total, count = 0;
+
     p.draw = function() {
         let p = this;
         if (general_settings.background) {
@@ -104,28 +108,40 @@ new ( require ( 'p5' ) ) ( function ( p ) {
         p.scale(camera.zoom, camera.zoom);
 
         // Calculate next positions for all particles
-        if (!general_settings.paused || general_settings.step_this_frame) {
-            simulation.simulateParticles ( p, particles );
-            general_settings.step_this_frame = false;
-        }
-
-        simulation.updateParticles ( p, particles );
-
-        // Calculate next positions for all particles
         // if (!general_settings.paused || general_settings.step_this_frame) {
-        //     particles.map(item => {
-        //         item.calculateUpdate(p, particles);
-        //         return item;
-        //     });
+        //     simulation.simulateParticles ( p, particles );
         //     general_settings.step_this_frame = false;
         // }
         //
-        // // Update values to new positions and draw.
-        // particles.map(item => {
-        //     item.update();
-        //     item.draw(p);
-        //     return item;
-        // });
+        // simulation.updateParticles ( p, particles );
+
+        // Calculate next positions for all particles
+        if (!general_settings.paused || general_settings.step_this_frame) {
+
+            ms = performance.now ();
+            for ( let particle of particles ) {
+                // particle.calculateUpdate(p, particles);
+                particle.fasterInteractions ( particles );
+            }
+            total += performance.now () - ms;
+            count++;
+            if ( count === 10 ) {
+                perf.time = total / count;
+                perf.frame += count;
+                count = 0;
+                total = 0;
+                console.log ( perf );
+            }
+
+            general_settings.step_this_frame = false;
+        }
+
+        // Update values to new positions and draw.
+        for ( let particle of particles ) {
+            // particle.update();
+            particle.fasterUpdate ();
+            particle.draw(p);
+        }
 
         p.pop();
         // UI AREA -----------------
