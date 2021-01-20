@@ -5,15 +5,16 @@ const grid_size = Math.max.apply ( Math, Object.values ( interactions ).map ( v 
 
 const grid = new Grid ( grid_size );
 
-module.exports.simulateParticles = function simulateParticles ( p, particles ) {
+module.exports.simulateParticles = function simulateParticles ( particles ) {
     // reset the grid, insert all particles
     grid.addParticles ( particles );
 
     // walk occupied grid cells
-    for ( let cell of grid.cells.values () ) {
+    for ( let cell of Object.values ( grid.cells ) ) {
+        cell = cell.slice ( 1, cell [ 0 ] + 1 );
         // update all particles assigned to a cell
         for ( let particle of cell ) {
-            particle.calculateUpdate ( p, cell );
+            particle.fasterInteractions ( cell );
         }
     }
 }
@@ -21,7 +22,7 @@ module.exports.simulateParticles = function simulateParticles ( p, particles ) {
 module.exports.updateParticles = function updateParticles ( p, particles ) {
     // advance and render particles at their new positions
     for ( let particle of particles ) {
-        particle.update ();
+        particle.fasterUpdate ();
         particle.draw ( p );
     }
 }
