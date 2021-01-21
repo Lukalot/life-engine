@@ -9,7 +9,6 @@
 //Instantiates P5 sketch to keep it out of the global scope.
 new ( require ( 'p5' ) ) ( function ( p ) {
 
-    //Imports‮
     require('./js/utils/require_hjson.js');
     //​​Imports our custom function to decide what color the fill shall be.
     //const { getFillColor } = require('./js/src/colorController');
@@ -39,16 +38,35 @@ new ( require ( 'p5' ) ) ( function ( p ) {
     let particles = []
 
     function createSoup(w, h, quantity) {
-        for (let i = quantity; i > 0; i--) {
 
-            let pos_vector = new Vector(p.random(-w / 2, w / 2), p.random(-h / 2, h / 2))
-            let vel_vector = new Vector(0, 0)
-            let pt = new Particle(
-                ptypes[p.floor(p.random() * ptypes.length)],
-                pos_vector,
-                vel_vector,
-            )
-            particles.push(pt)
+        if ( simulation_settings.simulation_area.radial_distribution ) {
+
+            // hard coded initial distribution based on dish radius
+            // pressure would be doubled assuming that the dish radius is already set to the optimum
+            const radius = 0.5 * simulation_settings.simulation_area.dish_radius;
+            let a, i = quantity, r;
+
+            while ( i-- ) {
+                a = 2 * Math.PI * Math.random ();
+                r = radius * Math.sqrt ( Math.random () );
+                particles.push ( new Particle (
+                    ptypes [ Math.random () * ptypes.length | 0 ],
+                    new Vector ( r * Math.cos ( a ), r * Math.sin ( a ) ),
+                    new Vector ( 0, 0 )
+                ) );
+            }
+        } else {
+            for (let i = quantity; i > 0; i--) {
+
+                let pos_vector = new Vector(p.random(-w / 2, w / 2), p.random(-h / 2, h / 2))
+                let vel_vector = new Vector(0, 0)
+                let pt = new Particle(
+                    ptypes[p.floor(p.random() * ptypes.length)],
+                    pos_vector,
+                    vel_vector,
+                )
+                particles.push(pt)
+            }
         }
     }
 
