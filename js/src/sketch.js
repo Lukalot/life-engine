@@ -100,19 +100,20 @@ new ( require ( 'p5' ) ) ( function ( p ) {
         drawCanvas()
     }
 
-    let perf = { frame: 0, time: 0 },
+    let perf = { frame: 0, time: 0, max_particles: 0 },
         ms, total, count = 0;
 
     function startPerformance () {
         ms = performance.now ();
     }
 
-    function logPerformance () {
+    function logPerformance ( max_particles ) {
         total += performance.now () - ms;
         count++;
         if ( count === 10 ) {
             perf.time = total / count;
             perf.frame += count;
+            perf.max_particles = max_particles;
             count = 0;
             total = 0;
             console.log ( perf );
@@ -123,8 +124,7 @@ new ( require ( 'p5' ) ) ( function ( p ) {
         // Calculate next positions for all particles
         if (!general_settings.paused || general_settings.step_this_frame) {
             startPerformance ();
-            simulation.simulateParticles ( particles );
-            logPerformance ();
+            logPerformance ( simulation.simulateParticles ( particles ) );
             general_settings.step_this_frame = false;
         }
 
