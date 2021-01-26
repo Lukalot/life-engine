@@ -6,6 +6,10 @@ require('electron-reload')(__dirname, {
   electron: path.join(__dirname, 'node_modules', '.bin', 'electron')
 });
 
+require('./js/utils/require_hjson.js');
+
+const simulation_settings = require ( './js/config/simulation.hjson' );
+
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow
@@ -13,8 +17,8 @@ let mainWindow
 function createWindow() {
   // Create the browser window.
   mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: simulation_settings.simulation_area.width,
+    height: simulation_settings.simulation_area.width,
     webPreferences: {
       nodeIntegration: true,
     }

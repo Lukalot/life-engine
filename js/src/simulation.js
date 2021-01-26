@@ -9,14 +9,20 @@ module.exports.simulateParticles = function simulateParticles ( particles ) {
     // reset the grid, insert all particles
     grid.addParticles ( particles );
 
+    let count, max_particles = 0
+
     // walk occupied grid cells
     for ( let cell of Object.values ( grid.cells ) ) {
-        cell = cell.slice ( 1, cell [ 0 ] + 1 );
+        count = cell [ 0 ];
+        cell = cell.slice ( 1, count + 1 );
         // update all particles assigned to a cell
         for ( let particle of cell ) {
             particle.fasterInteractions ( cell );
         }
+        max_particles = Math.max ( max_particles, count );
     }
+
+    return max_particles;
 }
 
 module.exports.updateParticles = function updateParticles ( p, particles ) {
