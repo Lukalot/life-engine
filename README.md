@@ -1,7 +1,5 @@
 # Life Engine
-A P5/Electron application to facilitate a wide range of particle simulations, including, especially, cellular automata/life related experiments within an unrestricted physics based environment.
-
-In order to keep P5 out of the global scope, it is instantiated inside sketch.js. This means that whenever you would call a p5 method, you must call it from the injected p5 instance. For example, in the sketch function, you must use `p.ellipse()` rather than just `ellipse`.
+An Electron/WebGL application to facilitate a wide range of particle simulations, including, especially, cellular automata/life related experiments within an unrestricted physics based environment.
 
 ## To Use
 
@@ -9,7 +7,7 @@ To clone and run this repository you'll need [Git](https://git-scm.com) and [Nod
 
 ```bash
 # Clone this repository
-git clone https://github.com/lukalot/life-engine
+git clone https://github.com/EricBalingit/life-engine
 # Go into the repository
 cd life-engine
 # Install dependencies
