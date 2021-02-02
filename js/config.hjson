@@ -1,6 +1,6 @@
 {
     dev: true,
-    csspath: './2.0.0/ui/css/'
+    csspath: './ui/css/'
     simulation: {
         additive_relationships_override: null, // false, true, or null. Forces relationship rules stacking additively or being static. Uses per-type value if null.
         acceleration_override: null, // false, true, or null. Forces relationships setting acceleration instead of velocity. Uses per-type value if null.
