@@ -1,17 +1,28 @@
 'use strict';
 
-const   csspath = require ( '../../js/config.hjson' ).csspath,
+require = require ( '../../require' );
+
+const   csspath = require ( '../js/config.hjson' ).csspath,
         name = 'dual-slider',
         template = document.createElement ( 'template' );
 
-template.innerHTML = require ( `./html/${name}.html` ).replace ( /\n\s*/g, '' ).replace ( '$$$', `${csspath + name}.css` );
+template.innerHTML = require ( `../ui/html/${name}.html` ).replace ( /\n\s*/g, '' ).replace ( '$$$', `${csspath + name}.css` );
 
 class DualSlider extends HTMLElement {
 
     #low = 0;
     #high = 0;
+    #low_marker = null;
+    #high_marker = null;
     #bound = false;
+    #vertical = false;
     #attrs = {
+        vertical: function ( old, val ) {
+            val = !!val;
+            if ( val !== this.#vertical ) {
+                this.vertical = val;
+            }
+        },
         bound: function ( old, val ) {
             val = !!val;
             if ( val !== this.#bound ) {
@@ -37,11 +48,13 @@ class DualSlider extends HTMLElement {
     }
 
     set low ( val ) {
-        val = Math.min ( Math.max ( 0, Number ( val ) ), 1 );
+        this.#low = Math.min ( Math.max ( 0, Number ( val ) ), 1 );
+        this.#low_marker.width = ( 100.0 * this.#low ) + '%';
         this.setAttribute ( 'low', this.#low );
-        if ( this.#bound & val > this.#high ) {
-            this.#high = 1.0 - val;
-            this.setAttribute ( 'low', this.#high );
+        if ( this.#bound && ( this.#low + this.#high > 1.0 ) ) {
+            this.#high = 1.0 - this.#low;
+            this.#high_marker.width = ( 100.0 * this.#high ) + '%';
+            this.setAttribute ( 'high', this.#high );
         }
     }
 
@@ -50,10 +63,12 @@ class DualSlider extends HTMLElement {
     }
 
     set high ( val ) {
-        val = Math.min ( Math.max ( 0, Number ( val ) ), 1 );
+        this.#high = Math.min ( Math.max ( 0, Number ( val ) ), 1 );
+        this.#high_marker.width = ( 100.0 * this.#high ) + '%';
         this.setAttribute ( 'high', this.#high );
-        if ( this.#bound & val > this.#low ) {
-            this.#low = 1.0 - val;
+        if ( this.#bound && ( this.#high + this.#low > 1.0 ) ) {
+            this.#low = 1.0 - this.#high;
+            this.#low_marker.width = ( 100.0 * this.#low ) + '%';
             this.setAttribute ( 'low', this.#low );
         }
     }
@@ -68,6 +83,19 @@ class DualSlider extends HTMLElement {
             this.setAttribute ( 'bound', '' );
         } else {
             this.removeAttribute ( 'bound' );
+        }
+    }
+
+    get vertical () {
+        return !!this.#vertical;
+    }
+
+    set vertical ( val ) {
+        val = !!val;
+        if ( val & !this.hasAttribute ( 'vertical' ) ) {
+            this.setAttribute ( 'vertical', '' );
+        } else {
+            this.removeAttribute ( 'vertical' );
         }
     }
 
@@ -87,34 +115,28 @@ class DualSlider extends HTMLElement {
                 markers = content.querySelectorAll ( '.marker' ),
                 bar = content.querySelector ( '.bar' ),
                 update = ( pointer, ts ) => {
-                    let size = this.vertical ? bounds.height : bounds.width;
+                    let size = pointer.bounds;
                     this [ pointer.name ] = Math.min ( Math.max ( 0, pointer.offset ), size ) / size;
                     pointer.frame = window.requestAnimationFrame ( pointer.update );
                 },
                 pointermove = ( pointer, event ) => {
                     if ( event.pointerId === pointer.id ) {
-                        let size, movement;
-                        if ( this.vertical ) {
-                            size = bounds.height;
-                            movement = "movementY"
-                        } else {
-                            size = bounds.width;
-                            movement = "movementX";
-                        }
-                        pointer.offset = Math.min ( Math.max ( 0, pointer.offset + event [ movement ] ), size );
+                        let size = pointer.bounds, movement = event [ this.vertical ? "movementY" : "movementX" ];
+                        movement = "low" === pointer.name ? movement : -movement;
+                        pointer.offset = Math.min ( Math.max ( 0, pointer.offset + movement ), size );
                     }
                 },
-                pointerup = event => {
+                pointerup = ( pointer, event ) => {
                     if ( event.pointerId === pointer.id ) {
-                        window.stopAnimationFrame ( pointer.frame );
+                        window.cancelAnimationFrame ( pointer.frame );
                         window.removeEventListener ( 'pointermove', pointer.move );
                         window.removeEventListener ( 'pointerup', pointer.up );
                     }
                 },
                 pointerdown = ( pointer, event ) => {
-                    pointer.bounds = bar.getBoundingClientRect ();
+                    pointer.bounds = bar.getBoundingClientRect () [ this.vertical ? "height" : "width" ];
                     pointer.id = event.pointerId;
-                    pointer.offset = markers [ 0 ].getBoundingClientRect () [ this.vertical ? "height" : "width" ];
+                    pointer.offset = markers [ "low" === pointer.name ? 0 : 1 ].getBoundingClientRect () [ this.vertical ? "height" : "width" ];
                     window.addEventListener ( 'pointermove', pointer.move );
                     window.addEventListener ( 'pointerup', pointer.up );
                     pointer.frame = window.requestAnimationFrame ( pointer.update );
@@ -131,6 +153,12 @@ class DualSlider extends HTMLElement {
 
         pointers [ 0 ].addEventListener ( 'pointerdown', low.down );
         pointers [ 1 ].addEventListener ( 'pointerdown', high.down );
+
+        this.#low_marker = markers [ 0 ].style;
+        this.#high_marker = markers [ 1 ].style;
+
+        this.#bound = this.hasAttribute ( 'bound' );
+        this.#vertical = this.hasAttribute ( 'vertical' );
 
         this.attachShadow ( { mode: 'closed' } ).appendChild ( content );
     }

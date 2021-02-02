@@ -3,6 +3,10 @@
     vertical-align: middle;
     min-width: 100px;
 }
+:host([vertical]) {
+    transform: rotate(90deg);
+    border: 1px solid red;
+}
 .bar, .marker {
     height: 100%;
 }

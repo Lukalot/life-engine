@@ -10,9 +10,10 @@ require ( 'electron-reload' )( __dirname, {
 } );
 
 // require extensions and dev wrapper
-require ( './require' );
+delete require.cache [ require.resolve ( './require' ) ];
+require = require ( './require' );
 
-const config = require ( './js/config.hjson' );
+const config = require ( '../js/config.hjson' );
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -30,6 +31,7 @@ function createWindow() {
 
     // and load the index.html of the app.
     mainWindow.loadFile ( 'index.html' );
+    require.save ();
 
     // Open the DevTools.
     // mainWindow.webContents.openDevTools()

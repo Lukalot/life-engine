@@ -16,13 +16,10 @@
 // timestamp is compared to the stored timestamp.  If the two don't match, the
 // require cache for that module is busted before the file is require()d.
 
-//
-
 const   fs = require ( 'fs' ),
-        config = require ( "../js/config.hjson" ),
+        config = require ( '../js/config.hjson' ),
         cachepath = require.resolve ( './_file_cache.json' ),
-        cache = JSON.parse ( fs.readFileSync ( cachepath, 'utf8' ) ),
-        require = ( window || global ).require;
+        cache = JSON.parse ( fs.readFileSync ( cachepath, 'utf8' ) );
 
 let update = false;
 
@@ -43,7 +40,10 @@ uncached.save = function save () {
     }
 };
 
+// cache this file
+uncached ( './uncached.js' );
+
 // just in case some other module uses require.save, otherwise noop
 require.save = require.save || function () {};
 
-( window || global ).require = config.dev ? uncached : require;
+module.exports = config.dev ? uncached : require;

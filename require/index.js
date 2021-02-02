@@ -1,2 +1,3 @@
 require ( './require-extensions.js' );
-require ( './uncached.js' );
+delete require.cache [ require.resolve ( './uncached.js' ) ];
+module.exports = require ( './uncached.js' );
