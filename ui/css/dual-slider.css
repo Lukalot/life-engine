@@ -3,18 +3,13 @@
     vertical-align: middle;
     min-width: 100px;
 }
-:host([vertical]) {
-    transform: rotate(90deg);
-    border: 1px solid red;
-}
-.bar, .marker {
-    height: 100%;
+.client {
+    padding: 16px 6px;
 }
 .bar {
     position: relative;
     background-color: rgb(64,64,64);
     height: 4px;
-    margin: 16px 6px;
 }
 .pointer {
     position: absolute;
@@ -38,6 +33,7 @@
 }
 .marker {
     position: relative;
+    height: 100%;
     width: 0px;
     background-color: rgb(192,192,192,0.5);
 }
@@ -49,5 +45,5 @@
     left: -6px;
 }
 .pointer:active, .pointer:active:after {
-    border-bottom-color: rgba(92,92,92,0.5);
+    border-bottom-color: rgb(92,92,92);
 }

@@ -2,13 +2,15 @@
 
 require = require ( '../../require' );
 
-const   csspath = require ( '../js/config.hjson' ).csspath,
-        name = 'dual-slider',
-        template = document.createElement ( 'template' );
+const   template = document.createElement ( 'template' ),
+        html = require ( `../ui/html/dual-slider.html` );
 
-template.innerHTML = require ( `../ui/html/${name}.html` ).replace ( /\n\s*/g, '' ).replace ( '$$$', `${csspath + name}.css` );
+// format/remove whitespace between tags
+template.innerHTML = html.replace ( /\n\s*/g, '' );
 
 class DualSlider extends HTMLElement {
+
+    static get observedAttributes () { return [ 'bound', 'low', 'high' ]; }
 
     #low = 0;
     #high = 0;
@@ -16,13 +18,8 @@ class DualSlider extends HTMLElement {
     #high_marker = null;
     #bound = false;
     #vertical = false;
+    #updating = false;
     #attrs = {
-        vertical: function ( old, val ) {
-            val = !!val;
-            if ( val !== this.#vertical ) {
-                this.vertical = val;
-            }
-        },
         bound: function ( old, val ) {
             val = !!val;
             if ( val !== this.#bound ) {
@@ -50,11 +47,11 @@ class DualSlider extends HTMLElement {
     set low ( val ) {
         this.#low = Math.min ( Math.max ( 0, Number ( val ) ), 1 );
         this.#low_marker.width = ( 100.0 * this.#low ) + '%';
+        this.#updating = true;
         this.setAttribute ( 'low', this.#low );
+        this.#updating = false;
         if ( this.#bound && ( this.#low + this.#high > 1.0 ) ) {
-            this.#high = 1.0 - this.#low;
-            this.#high_marker.width = ( 100.0 * this.#high ) + '%';
-            this.setAttribute ( 'high', this.#high );
+            this.high = 1.0 - this.#low;
         }
     }
 
@@ -65,11 +62,11 @@ class DualSlider extends HTMLElement {
     set high ( val ) {
         this.#high = Math.min ( Math.max ( 0, Number ( val ) ), 1 );
         this.#high_marker.width = ( 100.0 * this.#high ) + '%';
+        this.#updating = true;
         this.setAttribute ( 'high', this.#high );
-        if ( this.#bound && ( this.#high + this.#low > 1.0 ) ) {
-            this.#low = 1.0 - this.#high;
-            this.#low_marker.width = ( 100.0 * this.#low ) + '%';
-            this.setAttribute ( 'low', this.#low );
+        this.#updating = false;
+        if ( this.#bound && ( ( this.#high + this.#low ) > 1.0 ) ) {
+            this.low = 1.0 - this.#high;
         }
     }
 
@@ -78,38 +75,39 @@ class DualSlider extends HTMLElement {
     }
 
     set bound ( val ) {
-        val = !!val;
-        if ( val & !this.hasAttribute ( 'bound' ) ) {
+        this.#bound = !!val;
+        this.#updating = true;
+        if ( this.#bound && !this.hasAttribute ( 'bound' ) ) {
             this.setAttribute ( 'bound', '' );
         } else {
             this.removeAttribute ( 'bound' );
         }
-    }
-
-    get vertical () {
-        return !!this.#vertical;
-    }
-
-    set vertical ( val ) {
-        val = !!val;
-        if ( val & !this.hasAttribute ( 'vertical' ) ) {
-            this.setAttribute ( 'vertical', '' );
-        } else {
-            this.removeAttribute ( 'vertical' );
-        }
+        this.#updating = false;
     }
 
     attributeChangedCallback ( name, old, val ) {
-        if ( name in this.attrs ) {
-            this.#attrs [ name ].call ( this, old, val );
+        if ( !this.#updating ) {
+            if ( name in this.#attrs ) {
+                this.#attrs [ name ].call ( this, old, val );
+            }
+        }
+    }
+
+    connectedCallback () {
+        this.#bound = this.hasAttribute ( 'bound' );
+        if ( this.hasAttribute ( 'low') ) {
+            this.low = this.getAttribute ( 'low' );
+        }
+        if ( this.hasAttribute ( 'high' ) ) {
+            this.high = this.getAttribute ( 'high' );
         }
     }
 
     constructor () {
         super ();
 
-        const   low = { name: "low", id: NaN, frame: NaN, offset: NaN, bounds: null, down: null, move: null, up: null, update: null },
-                high = { name: "high", id: NaN, frame: NaN, offset: NaN, bounds: null, down: null, move: null, up: null, update: null },
+        const   low = { name: "low", id: NaN, frame: NaN, offset: NaN, bounds: NaN, down: null, move: null, up: null, update: null },
+                high = { name: "high", id: NaN, frame: NaN, offset: NaN, bounds: NaN, down: null, move: null, up: null, update: null },
                 content = template.content.cloneNode ( true ),
                 pointers = content.querySelectorAll ( '.pointer' ),
                 markers = content.querySelectorAll ( '.marker' ),
@@ -156,9 +154,6 @@ class DualSlider extends HTMLElement {
 
         this.#low_marker = markers [ 0 ].style;
         this.#high_marker = markers [ 1 ].style;
-
-        this.#bound = this.hasAttribute ( 'bound' );
-        this.#vertical = this.hasAttribute ( 'vertical' );
 
         this.attachShadow ( { mode: 'closed' } ).appendChild ( content );
     }
