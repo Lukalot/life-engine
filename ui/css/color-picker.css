@@ -1,0 +1,30 @@
+:host {
+    display: inline-block;
+}
+
+.h {
+    position: relative;
+    background-color: red;
+}
+
+.sv {
+    width: 256px;
+    height: 256px;
+    background-color: transparent;
+    background: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 1)),
+                linear-gradient(to right, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0));
+}
+
+.h:hover .cursor {
+    display: inline-block;
+}
+.cursor {
+    font-family: "cursor";
+    font-style: normal;
+    font-weight: normal;
+    speak: never;
+
+    display: none;
+    mix-blend-mode: exclusion;
+    margin-top: -50%;
+}

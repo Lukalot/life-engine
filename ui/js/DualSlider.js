@@ -8,7 +8,7 @@ const   template = document.createElement ( 'template' ),
 // format/remove whitespace between tags
 template.innerHTML = html.replace ( /\n\s*/g, '' );
 
-class DualSlider extends HTMLElement {
+window.customElements.define ( 'dual-slider', class DualSlider extends HTMLElement {
 
     static get observedAttributes () { return [ 'bound', 'low', 'high' ]; }
 
@@ -157,6 +157,4 @@ class DualSlider extends HTMLElement {
 
         this.attachShadow ( { mode: 'closed' } ).appendChild ( content );
     }
-}
-
-window.customElements.define ( 'dual-slider', DualSlider );
+} );
