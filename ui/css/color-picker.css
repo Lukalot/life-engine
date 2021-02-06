@@ -2,9 +2,16 @@
     display: inline-block;
 }
 
+.content {
+    display: flex;
+    margin: 8px;
+}
+
 .h {
     position: relative;
+    display: inline;
     background-color: red;
+    border: 1px inset gray;
 }
 
 .sv {
@@ -15,16 +22,49 @@
                 linear-gradient(to right, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0));
 }
 
-.h:hover .cursor {
-    display: inline-block;
+.sv:active {
+    cursor: none;
 }
-.cursor {
-    font-family: "cursor";
-    font-style: normal;
-    font-weight: normal;
-    speak: never;
 
-    display: none;
-    mix-blend-mode: exclusion;
-    margin-top: -50%;
+.sv-pointer {
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    border: 1px solid white;
+    box-sizing: border-box;
+    margin: -7px 0 0 -7px;
+    border-radius: 100%;
+    left: 0px;
+    top: 255px;
+    background-color: black;
+}
+
+.hue {
+    margin-left: 16px;
+    width: 16px;
+    height: 256px;
+    position: relative;
+    background: linear-gradient(to bottom, #f00, #ff0 16.67%, #0f0 33.33%, #0ff 50%, #00f 66.67%, #f0f 83.33%, #f00 100% );
+    border: 1px inset gray;
+}
+
+.hue:active {
+    cursor: none;
+}
+
+.h-pointer {
+    position: absolute;
+    width: 100%;
+    border: 6px solid transparent;
+    border-left: 6px solid black;
+    border-right: 6px solid black;
+    margin: -6px 0 0 -6px;
+}
+
+.h-overlay, .sv-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
 }
