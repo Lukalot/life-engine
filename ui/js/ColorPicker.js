@@ -28,6 +28,7 @@ window.customElements.define ( 'color-picker', class ColorPicker extends HTMLEle
         const   content = template.content.cloneNode ( true ),
                 h = content.querySelector ( '.h-pointer' ).style,
                 sv = content.querySelector ( '.sv-pointer' ).style,
+                svBackground = content.querySelector ( '.h' ).style,
                 hueInput = content.querySelector ( '.h-overlay' ),
                 svInput = content.querySelector ( '.sv-overlay' ),
                 bounds = { h: null, sv: null },
@@ -39,6 +40,7 @@ window.customElements.define ( 'color-picker', class ColorPicker extends HTMLEle
                     hsv.h = 0.00390625 * offsets.h.top;
                     hsvToHsl ( hsv, hsl );
                     sv.backgroundColor = `hsl(${hsl.h + 'turn'},${(hsl.s * 100) + '%'},${(hsl.l * 100) + '%'})`;
+                    svBackground.backgroundColor = `hsl(${hsl.h + 'turn'},100%,50%)`;
                     let v = hsv.v;
                     hsv.v = Math.sqrt ( 1.0 - hsv.v );
                     hsvToHsl ( hsv, hsl );
