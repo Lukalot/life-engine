@@ -3,29 +3,31 @@
     <head>
         <meta charset="UTF-8">
         <title>Electron - Life Engine</title>
-        <!-- You can also require other files to run in this process -->
-        <link href="./photon/css/photon.css" rel="stylesheet" type="text/css">
-        <style>
-            body {
-                /* photon does this
-                margin: 0;
-                padding: 0;
-                */
-                -webkit-app-region: drag;
-                -webkit-user-select: none;
-            }
-
-            canvas {
-                display: block;
-            }
-        </style>
         <script src="./ui/js/index.js" type="text/javascript" charset="utf-8"></script>
-        <script src="./js/app.js" type="text/javascript" charset="utf-8"></script>
+        <link href="./photon/css/photon.css" rel="stylesheet" type="text/css">
+        <link href="./css/app-main.css" rel="stylesheet" type="text/css">
+        <script></script>
     </head>
     <body>
+        <header>
+            <span id="app-drag">
+                <b id="app-icon" class="app-icon"></b>
+                <b id="app-title"></b>
+            </span>
+            <span id="app-controls">
+                <span>
+                    <b class="app-min"></b>
+                    <b class="app-max"></b>
+                </span>
+                <span>
+                    <b class="app-close"></b>
+                </span>
+            </span>
+        </header>
         <p>Text above...................................</p>
         <span>Inline text: </span><dual-slider id="test" bound></dual-slider>
         <p>Text below...</p>
         <color-picker></color-picker>
+        <script src="./js/app.js" type="text/javascript" charset="utf-8"></script>
     </body>
 </html>
