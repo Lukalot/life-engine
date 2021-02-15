@@ -10,7 +10,7 @@ module.exports = function loadAppMenu ( windows ) {
                     label: 'New...',
                     accelerator: 'CmdOrCtrl+N',
                     click () {
-                        ipcMain.send ( 'new-sim' );
+                        windows.createSim.show ();
                     }
                 },
                 {

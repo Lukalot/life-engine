@@ -1,6 +1,6 @@
 'use strict';
 
-require = require ( '../../require/uncached.js' ) ( require );
+require = require ( '../../require' ) ( require );
 
 const   template = document.createElement ( 'template' ),
         LOW_DEFAULT = 0,
@@ -45,6 +45,8 @@ window.customElements.define ( 'dual-slider', class DualSlider extends HTMLEleme
     #changeLow = null;
     #changeHigh = null;
     #shadow = null;
+    #lowMarker = null;
+    #highMarker = null;
 
     static get observedAttributes () { return [ 'bound', 'low', 'high' ]; }
 

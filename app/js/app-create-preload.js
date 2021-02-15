@@ -4,7 +4,7 @@ function preload () {
     window.ipc = require ( 'electron' ).ipcRenderer;
 
     if ( require ( '../config.hjson' ).dev ) {
-        window.ipc.send ( 'contentLoaded', 'colorPicker' );
+        window.ipc.send ( 'contentLoaded', 'createSim' );
     }
 
     window.removeEventListener ( 'DOMContentLoaded', preload );

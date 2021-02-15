@@ -2,11 +2,10 @@
 <html>
     <head>
         <meta charset="UTF-8">
-        <title>Life Engine</title>
-        <script src="./ui/js/ColorPicker.js" type="text/javascript" charset="utf-8"></script>
-        <script src="./ui/js/DualSlider.js" type="text/javascript" charset="utf-8"></script>
-        <link href="./photon/css/photon.css" rel="stylesheet" type="text/css">
-        <link href="./css/app-main.css" rel="stylesheet" type="text/css">
+        <meta http-equiv="Content-Security-Policy" content="script-src 'self'; style-src-elem 'self'; font-src 'self'; default-src 'none'">
+        <title>Life Engine - Simulation</title>
+        <link href="../css/photon.css" rel="stylesheet" type="text/css">
+        <link href="../css/app-main.css" rel="stylesheet" type="text/css">
     </head>
     <body>
         <header>
@@ -29,6 +28,5 @@
         <span>Inline text: </span><dual-slider id="test" bound='true'></dual-slider>
         <p>Text below...</p>
         <color-picker></color-picker>
-        <script src="./js/app.js" type="text/javascript" charset="utf-8"></script>
     </body>
 </html>

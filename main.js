@@ -7,8 +7,8 @@ const {
         // nativeTheme,
     } = require ( 'electron' ),
     path = require ( 'path' ),
-    SRC_PATH = path.join ( __dirname, 'app/js' ),
-    HTML_PATH = path.join ( __dirname, 'app/html' );
+    SRC_PATH = path.join ( app.getAppPath(), 'app/js' ),
+    HTML_PATH = path.join ( app.getAppPath(), 'app/html' );
 
 require ( 'electron-reload' )( __dirname, {
     electron: path.join ( __dirname, 'node_modules', '.bin', 'electron' )
@@ -106,6 +106,7 @@ function buildUI () {
     require ( './app/js/ipc-config.js' ) ( ipcMain, windows );
 
     windows.main.maximize ();
+    windows.main.webContents.openDevTools ();
 
     windows.main.once ( 'ready-to-show', function () {
         // use preferred user theme ( this doesn't seem to work on window frames in electron )
@@ -137,7 +138,7 @@ function buildUI () {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.whenReady ().then ( buildUI );
+app.on ('ready', buildUI );
 
 // Quit when all windows are closed.
 app.on ( 'window-all-closed', function() {

@@ -1,6 +1,6 @@
 {
   "name": "life-engine",
-  "version": "2.0.0",
+  "version": "0.2.0",
   "description": "A gridless, particle-based, GOL-like simulation engine.",
   "main": "main.js",
   "scripts": {
@@ -25,10 +25,10 @@
   ],
   "license": "CC0-1.0",
   "dependencies": {
-    "electron": "^6.0.7",
-    "electron-reload": "^1.5.0",
-    "hjson": "^3.2.2",
-    "mocha": "^6.2.0",
-    "photonkit": "^0.1.2"
+    "electron": ">=6.0.7",
+    "electron-reload": ">=1.5.0",
+    "hjson": ">=3.2.2",
+    "mocha": ">=6.2.0",
+    "photonkit": ">=0.1.2"
   }
 }

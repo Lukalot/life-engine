@@ -5,11 +5,15 @@
             init: {
                 width: 800,
                 height: 600,
-                webPreferences: {
-                    preload: 'app-main-preload.js'
-                },
+                // maximize manually before showing, this prevents unecessary layout
                 paintWhenInitiallyHidden: false,
-                show: false
+                show: false,
+                webPreferences: {
+                    nodeIntegration: false,
+                    contextIsolation: false,
+                    enableRemoteModule: false,
+                    preload: 'app-main-preload.js',
+                }
             },
             menu: 'app-menu.js',
             layout: 'app-test.html'
@@ -19,16 +23,37 @@
                 width: 300,
                 height: 336,
                 useContentSize: true,
-                webPreferences: {
-                    preload: 'app-picker-preload.js'
-                },
                 resizable: false,
                 maximizable: false,
                 fullscreenable: false,
-                show: false
+                show: false,
+                webPreferences: {
+                    nodeIntegration: false,
+                    contextIsolation: false,
+                    enableRemoteModule: false,
+                    preload: 'app-picker-preload.js'
+                }
             },
             menu: null,
             layout: 'app-picker.html'
+        },
+        createSim: {
+            init: {
+                width: 800,
+                height: 600,
+                resizable: false,
+                maximizable: false,
+                minimizable: false,
+                show: false,
+                webPreferences: {
+                    nodeIntegration: false,
+                    contextIsolation: false,
+                    enableRemoteModule: false,
+                    preload: 'app-create-preload.js'
+                }
+            },
+            menu: null,
+            layout: 'app-create.html'
         }
     }
 }

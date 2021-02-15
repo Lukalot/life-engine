@@ -1,6 +1,6 @@
 'use strict';
 
-require = require ( '../../require/uncached.js' ) ( require );
+require = require ( '../../require' ) ( require );
 
 const   template = document.createElement ( 'template' );
 
