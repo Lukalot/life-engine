@@ -1,5 +1,4 @@
 {
-    dev: true,
     simulation: {
         additive_relationships_override: null, // false, true, or null. Forces relationship rules stacking additively or being static. Uses per-type value if null.
         acceleration_override: null, // false, true, or null. Forces relationships setting acceleration instead of velocity. Uses per-type value if null.
@@ -8,8 +7,8 @@
 
         view: { // simulation_settings.simulation_area
 
-            width: 1600, //window.innerWidth, // p is not defined. How to get window width outside of p5?
-            height: 1200, //window.innerHeight,
+            width: 800, //window.innerWidth, // p is not defined. How to get window width outside of p5?
+            height: 600, //window.innerHeight,
 
             edge_mode: 'soft_dish', // 'soft_dish', 'loop', 'hard_dish', 'hard', null. Soft is gradual attraction to the centre once the radius is exceeded
 

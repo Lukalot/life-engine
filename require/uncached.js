@@ -22,28 +22,42 @@
 
 const   fs = require ( 'fs' ),
         cachepath = require.resolve ( './_file_cache.json' ),
-        cache = JSON.parse ( fs.readFileSync ( cachepath, 'utf8' ) );
+        cache = fs.existsSync ( cachepath ) ? JSON.parse ( fs.readFileSync ( cachepath, 'utf8' ) ) : {};
 
 let update = false;
 
-function uncached ( name ) {
-    const   path = require.resolve ( name ).replace ( /\\/g, '/'),
-            timestamp = fs.statSync ( path ).mtimeMs;
-    if ( cache [ path ] !== timestamp ) {
-        cache [ path ] = timestamp
-        delete require.cache [ path ];
-        update = true;
-    }
-    return require ( name );
-}
-
-uncached.save = function save () {
+function save () {
     if ( update ) {
         fs.writeFileSync ( cachepath, JSON.stringify ( cache ) );
     }
 };
 
-// cache this file
-uncached ( './uncached.js' );
+function external ( require, name ) {
+    const   path = require.resolve ( name ).replace ( /\\/g, '/'),
+            timestamp = fs.statSync ( path ).mtimeMs;
+    let updated = false;
+    if ( cache [ path ] !== timestamp ) {
+        cache [ path ] = timestamp
+        delete require.cache [ path ];
+        update = updated = true;
+    }
+
+    return { updated, module: require ( name ) };
+}
+
+function uncached ( require ) {
+    function uncached ( name ) {
+        return external ( require, name ).module;
+    };
+
+    uncached.save = save;
+    // for externally require()'d modules, can return updated module or do nothing
+    uncached.external = external.bind ( null, require );
+
+    return uncached;
+}
+
+// "un"cache this file
+uncached ( require ) ( './uncached.js' );
 
 module.exports = uncached;

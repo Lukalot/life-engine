@@ -44,7 +44,7 @@
     width: 16px;
     height: 256px;
     position: relative;
-    background: linear-gradient(to bottom, #f00, #ff0 16.67%, #0f0 33.33%, #0ff 50%, #00f 66.67%, #f0f 83.33%, #f00 100% );
+    background: linear-gradient(to bottom, #f00, #ff0 calc(100% / 6), #0f0 calc(100% / 3), #0ff 50%, #00f calc(200% / 3), #f0f calc(500% / 6), #f00 100% );
     border: 1px inset gray;
 }
 

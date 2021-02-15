@@ -1,10 +1,11 @@
-require = require ( '../../require' );
+'use strict';
 
-const   template = document.createElement ( 'template' ),
-        html = require ( `../ui/html/color-picker.html` );
+require = require ( '../../require/uncached.js' ) ( require );
+
+const   template = document.createElement ( 'template' );
 
 // format/remove whitespace between tags
-template.innerHTML = html.replace ( /\n\s*/g, '' );
+template.innerHTML = require ( `../html/color-picker.html` ).replace ( /\n\s*/g, '' );
 
 function hsvToHsl ( V, L ) {
     let { h, s, v } = V,
@@ -48,9 +49,9 @@ window.customElements.define ( 'color-picker', class ColorPicker extends HTMLEle
     #updating = false;
     #setting = false;
     #connected = false;
-    #shadow = null;
     #inputValue = null;
     #changeValue = null;
+    #shadow = null;
 
     static get observedAttributes () {
         return [ 'value' ];
@@ -73,82 +74,10 @@ window.customElements.define ( 'color-picker', class ColorPicker extends HTMLEle
     constructor () {
         super ();
 
-        this.#inputValue = val => {
-            let update = false,
-                rgb = this.#rgb,
-                hsv = this.#hsv,
-                hsl = this.#hsl,
-                offsets = this.#offsets,
-                hPointer = this.#hPointer,
-                hue = this.#hue,
-                satVal = this.#satVal,
-                satValComputed = this.#satValComputed,
-                hColor = "",
-                svColor = "";
-
-            if ( this.#updating ) {
-                if ( offsets.h.top !== Number ( hPointer.top ) ) {
-                    update = true;
-                    hsl.h = hsv.h = 0.00390625 * offsets.h.top;
-                }
-                if ( offsets.sv.left !== Number ( satVal.left ) || offsets.sv.top !== Number ( satVal.top ) ) {
-                    update = true;
-                    hsv.s = offsets.sv.left / 255;
-                    hsv.v = ( 255 - offsets.sv.top ) / 255;
-                    hsvToHsl ( hsv, hsl );
-                }
-                hColor = `hsl(${hsl.h}turn,100%,50%)`;
-                svColor = `hsl(${hsl.h}turn,${100*hsl.s}%,${100*hsl.l}%)`;
-            } else {
-                // check for computed color === this.#value
-                svColor = satVal.backgroundColor;
-                satVal.backgroundColor = val;
-                val = satValComputed.backgroundColor;
-                satVal.backgroundColor = svColor;
-                if ( update = val === this.#value ) {
-                    svColor = val;
-                    let [ r, g, b ] = val.split ( /[(,)]/ ).slice ( 1, 4 ).map ( n => Number ( n ) );
-                        rgb.r = r;
-                        rgb.g = g;
-                        rgb.b = b;
-                    rgbToHsv ( rgb, hsv );
-                    hColor = `hsl(${hsv.h}turn,100%,50%)`;
-                    offsets.h.top = 255 * ( 1 - hsv.h );
-                    offsets.sv.left = 255 * hsv.s;
-                    offsets.sv.top = 255 * ( 1 - hsv.v );
-                }
-            }
-            if ( update && ( this.#reverting || this.dispatchEvent (
-                new CustomEvent ( 'input', {
-                    detail: Object.freeze ( { inputValue: svColor, currentValue: this.#value } )
-                } )
-            ) ) ) {
-                hPointer.top = offsets.h.top + 'px';
-                satVal.left = offsets.sv.left + 'px';
-                satVal.top = offsets.sv.top + 'px';
-                hue.backgroundColor = hColor;
-                satVal.backgroundColor = svColor;
-                this.#setting = true;
-                this.#value = svColor;
-                this.setAttribute ( 'value', satValComputed.backgroundColor );
-                this.#setting = false;
-            }
-        };
-
-        this.#changeValue = () => {
-            if ( this.#changed ) {
-                this.#changed = false;
-                if ( !this.dispatchEvent (
-                    new CustomEvent ( 'changed', {
-                        detail: Object.freeze ( { currentValue: this.#value, previousValue: this.#previousValue } )
-                    } )
-                ) ) { // if cancelled
-                    this.#reverting = true;
-                    this.value = this.#previousValue;
-                    this.#reverting = false;
-                }
-            }
-        };
+        // if ( !template ) {
+        //     template = document.createElement ( 'template' );
+        //     template.innerHTML = html;
+        // }
 
         this.#shadow = this.attachShadow ( { mode: 'closed' } );
         this.#shadow.appendChild ( template.content.cloneNode ( true ) );
@@ -227,9 +156,6 @@ window.customElements.define ( 'color-picker', class ColorPicker extends HTMLEle
 
                     };
 
-            shadow.querySelector ( '.h-overlay' ).addEventListener ( 'pointerdown', pointerdownH );
-            shadow.querySelector ( '.sv-overlay' ).addEventListener ( 'pointerdown', pointerdownSV );
-
             let svEl = shadow.querySelector ( '.sv-pointer' );
 
             this.#hsv = hsv;
@@ -241,10 +167,97 @@ window.customElements.define ( 'color-picker', class ColorPicker extends HTMLEle
             this.#satVal = svEl.style;
             this.#satValComputed = getComputedStyle ( svEl );
 
-            this.#value = this.#satValComputed.backgroundColor;
-            this.#setting = true;
-            this.setAttribute ( 'value', this.#value );
-            this.#setting = false;
+            // configure private methods
+            // see https://www.chromestatus.com/feature/5700509656678400
+            this.#inputValue = val => {
+                let update = false,
+                    rgb = this.#rgb,
+                    hsv = this.#hsv,
+                    hsl = this.#hsl,
+                    offsets = this.#offsets,
+                    hPointer = this.#hPointer,
+                    hue = this.#hue,
+                    satVal = this.#satVal,
+                    satValComputed = this.#satValComputed,
+                    hColor = "",
+                    svColor = "";
+
+                if ( this.#updating ) {
+                    if ( offsets.h.top !== Number ( hPointer.top ) ) {
+                        update = true;
+                        hsl.h = hsv.h = 0.00390625 * offsets.h.top;
+                    }
+                    if ( offsets.sv.left !== Number ( satVal.left ) || offsets.sv.top !== Number ( satVal.top ) ) {
+                        update = true;
+                        hsv.s = offsets.sv.left / 255;
+                        hsv.v = ( 255 - offsets.sv.top ) / 255;
+                        hsvToHsl ( hsv, hsl );
+                    }
+                    hColor = `hsl(${hsl.h}turn,100%,50%)`;
+                    svColor = `hsl(${hsl.h}turn,${100*hsl.s}%,${100*hsl.l}%)`;
+                } else {
+                    // check for computed color === this.#value
+                    svColor = satVal.backgroundColor;
+                    satVal.backgroundColor = val;
+                    val = satValComputed.backgroundColor;
+                    satVal.backgroundColor = svColor;
+                    if ( update = val === this.#value ) {
+                        svColor = val;
+                        let [ r, g, b ] = val.split ( /[(,)]/ ).slice ( 1, 4 ).map ( n => Number ( n ) );
+                            rgb.r = r;
+                            rgb.g = g;
+                            rgb.b = b;
+                        rgbToHsv ( rgb, hsv );
+                        hColor = `hsl(${hsv.h}turn,100%,50%)`;
+                        offsets.h.top = 255 * ( 1 - hsv.h );
+                        offsets.sv.left = 255 * hsv.s;
+                        offsets.sv.top = 255 * ( 1 - hsv.v );
+                    }
+                }
+                if ( update && ( this.#reverting || this.dispatchEvent (
+                    new CustomEvent ( 'input', {
+                        detail: Object.freeze ( { inputValue: svColor, currentValue: this.#value } )
+                    } )
+                ) ) ) {
+                    hPointer.top = offsets.h.top + 'px';
+                    satVal.left = offsets.sv.left + 'px';
+                    satVal.top = offsets.sv.top + 'px';
+                    hue.backgroundColor = hColor;
+                    satVal.backgroundColor = svColor;
+                    this.#setting = true;
+                    this.#value = svColor;
+                    this.setAttribute ( 'value', satValComputed.backgroundColor );
+                    this.#setting = false;
+                }
+            };
+
+            this.#changeValue = () => {
+                if ( this.#changed ) {
+                    this.#changed = false;
+                    if ( !this.dispatchEvent (
+                        new CustomEvent ( 'changed', {
+                            detail: Object.freeze ( { currentValue: this.#value, previousValue: this.#previousValue } )
+                        } )
+                    ) ) { // if cancelled
+                        this.#reverting = true;
+                        this.value = this.#previousValue;
+                        this.#reverting = false;
+                    }
+                }
+            };
+
+            if ( this.hasAttribute ( 'value' ) ) {
+                this.value = this.getAttribute ( 'value' );
+            } else {
+                this.#value = this.#satValComputed.backgroundColor;
+                this.#setting = true;
+                this.setAttribute ( 'value', this.#value );
+                this.#setting = false;
+            }
+
+            // bind pointerdown events
+            shadow.querySelector ( '.h-overlay' ).addEventListener ( 'pointerdown', pointerdownH );
+            shadow.querySelector ( '.sv-overlay' ).addEventListener ( 'pointerdown', pointerdownSV );
         }
     }
 } );

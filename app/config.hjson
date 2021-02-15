@@ -1,0 +1,34 @@
+{
+    dev: true,
+    ui: {
+        main: {
+            init: {
+                width: 800,
+                height: 600,
+                webPreferences: {
+                    preload: 'app-main-preload.js'
+                },
+                paintWhenInitiallyHidden: false,
+                show: false
+            },
+            menu: 'app-menu.js',
+            layout: 'app-test.html'
+        },
+        colorPicker: {
+            init: {
+                width: 300,
+                height: 336,
+                useContentSize: true,
+                webPreferences: {
+                    preload: 'app-picker-preload.js'
+                },
+                resizable: false,
+                maximizable: false,
+                fullscreenable: false,
+                show: false
+            },
+            menu: null,
+            layout: 'app-picker.html'
+        }
+    }
+}
