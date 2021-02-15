@@ -1,27 +1,36 @@
 {
-  "name": "p5-electron-quick-start",
-  "version": "1.0.0",
-  "description": "A quick start for building P5 sketches in Electron.",
+  "name": "life-engine",
+  "version": "0.0.1",
+  "license": "GPL 3.0",
+  "description": "A particle simulator",
+  "author": "lukenarnold@gmail.com",
   "main": "main.js",
   "scripts": {
-    "start": "electron .",
-    "test": "mocha ./js/**/*.test.js"
+    "postinstall": "install-app-deps",
+    "start": "npm install && electron .",
+    "dist": "build"
   },
-  "repository": "https://github.com/camerenisonfire/p5-electron-quick-start",
-  "keywords": [
-    "P5",
-    "Electron",
-    "quick",
-    "start",
-    "tutorial",
-    "demo"
-  ],
-  "author": "Cameren Dolecheck",
-  "license": "CC0-1.0",
+  "build": {
+    "appId": "com.lukalot.lifeengine",
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ]
+    },
+    "win": {
+      "target": "nsis",
+      "icon": "build/icon.ico"
+    }
+  },
   "dependencies": {
     "electron": "^6.1.12",
     "electron-reload": "^1.5.0",
     "mocha": "^6.2.3",
     "p5": "^0.9.0"
+  },
+  "devDependencies": {
+    "electron": "latest",
+    "electron-builder": "latest"
   }
 }
