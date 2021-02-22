@@ -1,0 +1,45 @@
+.palette {
+    display: flex;
+}
+
+.previous {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    margin-left: 4px;
+}
+
+.previous .item {
+    width: 28px;
+    height: 28px;
+}
+
+.color, .item {
+    border: 1px inset gray;
+}
+
+.color {
+    width: 62px;
+    height: 62px;
+}
+
+.item {
+    background-image: /* tint image */
+        linear-gradient(to right, rgba(128, 128, 128, 0.5), rgba(128, 128, 128, 0.5)),
+        /* checkered effect */
+        linear-gradient(to right, black 50%, white 50%),
+        linear-gradient(to bottom, black 50%, white 50%);
+    background-blend-mode: normal, difference, normal;
+    background-size: 4px 4px;
+
+}
+
+input[type=button] {
+    margin: 0.5em 0;
+    padding: 0.125em 1em;
+}
+
+.controls {
+    display: flex;
+    justify-content: space-between;
+}

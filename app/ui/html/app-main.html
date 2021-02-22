@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="Content-Security-Policy" content="script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; default-src 'none'">
+        <title>Life Engine - Simulation</title>
+        <script src="../js/DualSlider.js"></script>
+        <script src="../js/ColorPicker.js"></script>
+        <link href="../css/photon.css" rel="stylesheet" type="text/css">
+        <link href="../css/app-main.css" rel="stylesheet" type="text/css">
+    </head>
+    <body>
+        <header>
+            <span id="app-drag">
+                <b id="app-icon" class="app-icon"></b>
+                <b id="app-title"></b>
+            </span>
+            <span id="app-controls">
+                <span>
+                    <b class="app-min"></b>
+                    <b class="app-max"></b>
+                </span>
+                <span>
+                    <b class="app-close"></b>
+                </span>
+            </span>
+            Header
+        </header>
+        <p>Text above...................................</p>
+        <span>Inline text: </span><dual-slider id="test" bound='true'></dual-slider>
+        <p>Text below...</p>
+        <color-picker></color-picker>
+    </body>
+</html>

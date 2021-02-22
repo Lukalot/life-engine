@@ -1,0 +1,133 @@
+{
+    /*
+    main: require ( './ipc-main.js' ),
+    editSim: require ( './ipc-edit-sim.js' ),
+    editInteractions: require ( './ipc-edit-interactions.js' ),
+    editParticle: require ( './ipc-edit-particle.js' ),
+    editForce: require ( './ipc-edit-force.js' ),
+    colorPicker: require ( './ipc-color-picker.js' )
+    */
+    dev: true,
+    paths: {
+        layout: 'ui/html',
+        menu: 'menu',
+        preload: 'preload',
+        ipc: 'config'
+    },
+    apiName: 'LifeEngine',
+    ui: {
+        main: {
+            init: {
+                width: 800,
+                height: 600,
+                // maximize manually before showing, this prevents unecessary layout
+                paintWhenInitiallyHidden: false,
+                show: false,
+                webPreferences: {
+                    nodeIntegration: false,
+                    contextIsolation: true,
+                    enableRemoteModule: false,
+                }
+            },
+            preload: 'preload-main.js',
+            ipc: 'ipc-main.js',
+            menu: 'app-main-menu.js',
+            layout: 'app-main.html',
+            parent: null,
+        },
+        editSim: {
+            init: {
+                width: 800,
+                height: 600,
+                show: false,
+                modal: true,
+                webPreferences: {
+                    nodeIntegration: false,
+                    contextIsolation: true,
+                    enableRemoteModule: false
+                }
+            },
+            preload: 'preload-edit-sim.js',
+            ipc: 'ipc-edit-sim.js',
+            menu: null,
+            layout: 'app-edit-sim.html',
+            parent: 'main'
+        },
+        editInteractions: {
+            init: {
+                width: 800,
+                height: 600,
+                show: false,
+                modal: true,
+                webPreferences: {
+                    nodeIntegration: false,
+                    contextIsolation: true,
+                    enableRemoteModule: false
+                }
+            },
+            preload: 'preload-edit-interactions.js',
+            ipc: 'ipc-edit-interactions.js',
+            menu: null,
+            layout: 'app-edit-interactions.html',
+            parent: 'editSim'
+        },
+        editParticle: {
+            init: {
+                width: 800,
+                height: 600,
+                show: false,
+                modal: true,
+                webPreferences: {
+                    nodeIntegration: false,
+                    contextIsolation: true,
+                    enableRemoteModule: false
+                }
+            },
+            preload: 'preload-edit-particle.js',
+            ipc: 'ipc-edit-particle.js',
+            menu: null,
+            layout: 'app-edit-particle.html',
+            parent: 'editInteractions'
+        },
+        editForce: {
+            init: {
+                width: 800,
+                height: 600,
+                show: false,
+                modal: true,
+                webPreferences: {
+                    nodeIntegration: false,
+                    contextIsolation: true,
+                    enableRemoteModule: false
+                }
+            },
+            preload: 'preload-edit-force.js',
+            ipc: 'ipc-edit-force.js',
+            menu: null,
+            layout: 'app-edit-force.html',
+            parent: 'editInteractions'
+        },
+        colorPicker: {
+            init: {
+                width: 300,
+                height: 336,
+                useContentSize: true,
+                resizable: false,
+                maximizable: false,
+                fullscreenable: false,
+                show: false,
+                modal: true,
+                webPreferences: {
+                    nodeIntegration: false,
+                    contextIsolation: true,
+                    enableRemoteModule: false
+                }
+            },
+            preload: 'preload-color-picker.js',
+            ipc: 'ipc-color-picker.js',
+            menu: null,
+            layout: 'app-color-picker.html',
+            parent: 'editParticle'
+        }
+    }
+}

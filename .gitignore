@@ -1,2 +1,3 @@
 node_modules/
 require/_file_cache.json
+package-lock.json
