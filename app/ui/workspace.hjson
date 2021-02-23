@@ -1,0 +1,10 @@
+{
+    file: {
+        path: ""
+    },
+    recent: [],
+    preferences: {
+        theme: "System",
+        launchMostRecent: true
+    }
+}

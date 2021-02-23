@@ -4,7 +4,6 @@ const {
         BrowserWindow,
         ipcMain,
         Menu,
-        nativeTheme,
     } = require ( 'electron' ),
     path = require ( 'path' );
 
@@ -15,17 +14,23 @@ require ( 'electron-reload' )( __dirname, {
 // require extensions and dev wrapper ( if applicable )
 require = require ( './dev/require' ) ( require );
 
-let config = require ( './config/config.hjson' ),
+let deepCopy = require ( './dev/utils/deepCopy.js' ),
+    originalConfig = require ( './config/config.hjson' ),
+    config = deepCopy ( originalConfig ),
     paths = config.paths;
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let   windows = {};
 
+const   DEV_MODE = config.dev,
+        DEBUG = false,
+        workspace = require ( './ui/workspace.hjson' );
+
 function buildMenu ( win, src ) {
 
     let menu = src ? Menu.buildFromTemplate (
-        require ( path.join ( __dirname, paths.menu, src ) ) ( windows )
+        require ( path.join ( __dirname, paths.menu, src ) ) ( windows, workspace )
     ) : null;
 
     if ( win ) {
@@ -44,6 +49,9 @@ function buildMenu ( win, src ) {
 function configWindow ( config ) {
 
     config.init.webPreferences.preload = path.join ( __dirname, paths.preload, config.preload );
+    if ( DEV_MODE ) {
+        config.init.webPreferences.devTools = true;
+    }
     let win = new BrowserWindow ( config.init );
 
     config.layout = path.join ( __dirname, paths.layout, config.layout );
@@ -52,13 +60,20 @@ function configWindow ( config ) {
     config.ipc = path.join ( __dirname, paths.ipc, config.ipc );
     require ( config.ipc ) ( ipcMain, windows );
 
+    if ( config.init.parent ) {
+        win.on ( 'close', event => {
+            event.preventDefault ();
+            win.hide ();
+        } );
+    }
+
     return win;
 }
 
 function buildUI () {
 
     // handle file cache when in dev mode
-    if ( config.dev ) {
+    if ( DEV_MODE ) {
         require ( './dev/content-cache.js' ) ( ipcMain );
     }
 
@@ -68,13 +83,18 @@ function buildUI () {
         Menu.setApplicationMenu ( buildMenu ( null, config.ui.main.menu ) );
     }
 
-    // use preferred user theme ( this doesn't seem to work on window frames in electron )
-    nativeTheme.themeSource = 'system';
+    // use preferred user theme
+    // - this doesn't seem to work on window frames in electron
+    // - devtools seems to mung it
+    // - the background is preferred when devtools is opened initally, but reverts when devtools is manually closed
+    // - should implement theme selection at content/css query level
+    // - opening devtools seems to grab the preferred theme
+    // nativeTheme.themeSource = 'dark';
 
-    // initialize other windows with main as the parent
+    // NOTE: windows are constructed in order and the parent property depends
+    // on that order being maintained ( null parent means window is not modal,
+    //  otherwise it is )
     for ( let [ name, cfg ] of Object.entries ( config.ui ) ) {
-        // NOTE: windows are constructed in order and the parent property depends
-        // on that order being maintained
         if ( cfg.parent ) {
             cfg.init.parent = windows [ cfg.parent ];
         }
@@ -93,12 +113,17 @@ function buildUI () {
     windows.main.on ( 'closed', function () {
         // process may stay alive, reset config in case we rebuild the ui
         if ( process.platform === 'darwin' ) {
-            config = require ( './app/config.hjson' );
+            config = deepCopy ( originalConfig );
         } // otherwise everthing should be cordoned off for termination
     } );
 
     windows.main.maximize ();
-    windows.main.webContents.openDevTools ();
+
+    if ( DEV_MODE && DEBUG ) {
+        windows.main.webContents.openDevTools ();
+        windows.editSim.show ();
+        windows.editSim.openDevTools ();
+    }
 }
 
 // This method will be called when Electron has finished
@@ -110,7 +135,7 @@ app.on ('ready', buildUI );
 app.on ( 'window-all-closed', function() {
     // On macOS it is common for applications and their menu bar
     // to stay active until the user quits explicitly with Cmd + Q
-    if (process.platform !== 'darwin') {
+    if ( process.platform !== 'darwin' ) {
         app.quit ();
     }
 } );

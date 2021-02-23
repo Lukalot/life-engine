@@ -2,23 +2,23 @@
     display: flex;
 }
 
-.previous {
+#palette {
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
     margin-left: 4px;
 }
 
-.previous .item {
+#palette .item {
     width: 28px;
     height: 28px;
 }
 
-.color, .item {
+#color, .item {
     border: 1px inset gray;
 }
 
-.color {
+#color {
     width: 62px;
     height: 62px;
 }

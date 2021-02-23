@@ -1,26 +1,25 @@
 !function () {
     const   IPC = window [ "LifeEngine" ].ipc,
             ID = 'app-color-picker',
-            PALETTE = [];
-
-    let picker = document.querySelector ( '#colorpicker' ),
-        color = document.querySelector ( '.color' ),
-        palette = document.querySelector ( '.palette' ),
-        keep = document.querySelector ( '#keep' ),
-        confirm = document.querySelector ( '#confirm' );
+            PALETTE = [],
+            picker = document.getElementById ( 'colorpicker' ),
+            color = document.getElementById ( 'color' ),
+            palette = document.getElementById ( 'palette' ),
+            keep = document.getElementById ( 'keep' ),
+            confirm = document.getElementById ( 'confirm' );
 
     document.querySelectorAll ( '.item' ).forEach ( item => {
         item.addEventListener ( 'click', event => {
             if ( item.style.backgroundColor ) {
                 picker.value = color.style.backgroundColor = item.style.backgroundColor;
-                IPC.send ( ID, 'color-change', picker.value );
+                IPC.send ( ID, [ 'color-change', picker.value ] );
             }
         } );
     } );
 
     picker.addEventListener ( 'change', event => {
         color.style.backgroundColor = event.detail.currentValue;
-        IPC.send ( ID, 'color-change', color.style.backgroundColor );
+        IPC.send ( ID, [ 'color-change', color.style.backgroundColor ] );
     } );
 
     picker.addEventListener ( 'input', event => {
@@ -39,7 +38,7 @@
     } );
 
     confirm.addEventListener ( 'click', event => {
-        IPC.send ( ID, 'confirm' );
+        IPC.send ( ID, [ 'confirm' ] );
     } );
 
     IPC.on ( 'remove-color', ( index ) => {

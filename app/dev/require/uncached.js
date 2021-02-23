@@ -58,7 +58,6 @@ function jsAsText ( require, name ) {
 }
 
 function external ( require, name ) {
-    console.log ( name );
     const   path = require.resolve ( name ).replace ( /\\/g, '/'),
             timestamp = fs.statSync ( path ).mtimeMs;
     let updated = false;

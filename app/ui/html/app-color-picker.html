@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta charset="UTF-8">
-        <meta http-equiv="Content-Security-Policy" content="script-src 'self'; style-src-elem 'self'; font-src 'self'; default-src 'none'">
+        <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; font-src 'self'; default-src 'none'">
         <title>Life Engine - Color Picker</title>
         <script src="../js/ColorPicker.js"></script>
         <link href="../css/photon.css" rel="stylesheet" type="text/css">
@@ -12,8 +12,8 @@
     <body>
         <color-picker id="colorpicker"></color-picker>
         <div class="palette">
-            <div class="color"></div>
-            <div class="palette">
+            <div id="color"></div>
+            <div id="palette" class="palette">
                 <div class="item"></div>
                 <div class="item"></div>
                 <div class="item"></div>
@@ -34,6 +34,6 @@
             <input id="keep" type="button" value ="Keep">
             <input id="confirm" type="button" value="Ok">
         </div>
-        <script src="../js/app-picker.js"></script>
+        <script src="../js/app-color-picker.js"></script>
     </body>
 </html>

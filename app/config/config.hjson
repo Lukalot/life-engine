@@ -1,12 +1,4 @@
 {
-    /*
-    main: require ( './ipc-main.js' ),
-    editSim: require ( './ipc-edit-sim.js' ),
-    editInteractions: require ( './ipc-edit-interactions.js' ),
-    editParticle: require ( './ipc-edit-particle.js' ),
-    editForce: require ( './ipc-edit-force.js' ),
-    colorPicker: require ( './ipc-color-picker.js' )
-    */
     dev: true,
     paths: {
         layout: 'ui/html',
@@ -27,6 +19,7 @@
                     nodeIntegration: false,
                     contextIsolation: true,
                     enableRemoteModule: false,
+                    devTools: false
                 }
             },
             preload: 'preload-main.js',
@@ -44,7 +37,8 @@
                 webPreferences: {
                     nodeIntegration: false,
                     contextIsolation: true,
-                    enableRemoteModule: false
+                    enableRemoteModule: false,
+                    devTools: false
                 }
             },
             preload: 'preload-edit-sim.js',
@@ -62,7 +56,8 @@
                 webPreferences: {
                     nodeIntegration: false,
                     contextIsolation: true,
-                    enableRemoteModule: false
+                    enableRemoteModule: false,
+                    devTools: false
                 }
             },
             preload: 'preload-edit-interactions.js',
@@ -80,7 +75,8 @@
                 webPreferences: {
                     nodeIntegration: false,
                     contextIsolation: true,
-                    enableRemoteModule: false
+                    enableRemoteModule: false,
+                    devTools: false
                 }
             },
             preload: 'preload-edit-particle.js',
@@ -98,7 +94,8 @@
                 webPreferences: {
                     nodeIntegration: false,
                     contextIsolation: true,
-                    enableRemoteModule: false
+                    enableRemoteModule: false,
+                    devTools: false
                 }
             },
             preload: 'preload-edit-force.js',
@@ -120,7 +117,8 @@
                 webPreferences: {
                     nodeIntegration: false,
                     contextIsolation: true,
-                    enableRemoteModule: false
+                    enableRemoteModule: false,
+                    devTools: false
                 }
             },
             preload: 'preload-color-picker.js',

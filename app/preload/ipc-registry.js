@@ -46,7 +46,7 @@ module.exports = class Registry {
         };
 
         this.#addListener = ( channel, callback, acknowledge ) => {
-            let hash = this.#getListenerHash ( channel, callback, acknowledge ), listeners = this.#listeners, map = listners [ hash ] || null;
+            let hash = this.#getListenerHash ( channel, callback, acknowledge ), listeners = this.#listeners, map = listeners [ hash ] || null;
             if ( !hash ) {
                 hash = this.#hashListener ( channel, callback, acknowledge );
                 map = listeners [ hash ] = new WeakMap ();
@@ -54,7 +54,7 @@ module.exports = class Registry {
                 ( event, ...args ) => {
                     let response = callback ( ...args );
                     if ( acknowledge ) {
-                        event.sender.send ( channel, response );
+                        this.#ipcRenderer.send ( channel, response );
                     }
                 } );
                 this.#channels [ channel ].listeners [ hash ] = true;
@@ -91,10 +91,11 @@ module.exports = class Registry {
         };
     }
 
-    send ( channel, ...data ) {
-        if ( channel in this.#channels ) {
-            this.#ipcRenderer.send ( channel, ...data );
+    send ( channel, ...sendArgs ) {
+        if ( 'function' === typeof sendArgs [ sendArgs.length - 1 ] ) {
+            this.#ipcRenderer.once ( channel, ( event, ...args ) => { sendArgs.pop () ( ...args ); } )
         }
+        this.#ipcRenderer.send ( channel, ...sendArgs );
     }
 
     on ( channel, callback, acknowledge ) {
